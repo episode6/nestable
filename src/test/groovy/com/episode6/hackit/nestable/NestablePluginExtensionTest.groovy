@@ -4,9 +4,9 @@ import org.gradle.api.Project
 import spock.lang.Specification
 
 /**
- * Tests {@link NestedExtension}
+ * Tests {@link NestablePluginExtension}
  */
-class NestedExtensionTest extends Specification {
+class NestablePluginExtensionTest extends Specification {
 
   Project project
   TestObjectContainer testContainer
@@ -225,7 +225,7 @@ class NestedExtensionTest extends Specification {
     }
   }
 
-  static class RootExtensionObject extends NestedExtension {
+  static class RootExtensionObject extends NestablePluginExtension {
     String stringParam
     Integer intParam
 
@@ -239,24 +239,24 @@ class NestedExtensionTest extends Specification {
     }
   }
 
-  static class InnerTestClass extends NestedExtension {
+  static class InnerTestClass extends NestablePluginExtension {
     String stringParam
     Integer intParam
     InnerInnerTestClass innerInnerTest1
     InnerInnerTestClass innerInnerTest2
 
-    InnerTestClass(NestedExtension parent, String newName) {
+    InnerTestClass(NestablePluginExtension parent, String newName) {
       super(parent, newName)
       innerInnerTest1 = new InnerInnerTestClass(this, "innerInnerTest1")
       innerInnerTest2 = new InnerInnerTestClass(this, "innerInnerTest2")
     }
   }
 
-  static class InnerInnerTestClass extends NestedExtension {
+  static class InnerInnerTestClass extends NestablePluginExtension {
     String stringParam
     Integer intParam
 
-    InnerInnerTestClass(NestedExtension parent, String newName) {
+    InnerInnerTestClass(NestablePluginExtension parent, String newName) {
       super(parent, newName)
     }
   }

@@ -4,7 +4,7 @@ package com.episode6.hackit.nestable
  * Helper class to translate directly-accessed get methods into calls to getProperty() so that
  * the gradle.properties can be checked
  */
-class NestedExtensionHelper {
+class NestablePluginExtensionHelper {
 
   static final List<String> OBJECT_METHODS = GroovyObject.metaClass.getMetaMethods().collect {it.name}
   static final List<String> SPECIAL_GET_METHODS = [
@@ -13,7 +13,7 @@ class NestedExtensionHelper {
       "getNamespace",
   ]
 
-  static Object handleRealMethod(NestedExtension extension, MetaMethod method, Object args) {
+  static Object handleRealMethod(NestablePluginExtension extension, MetaMethod method, Object args) {
     String propName = getPropertyNameFromGetterMethod(method)
     if (propName == null || !extension.hasProperty(propName)) {
       return method.invoke(extension, args)

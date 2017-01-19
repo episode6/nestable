@@ -7,21 +7,21 @@ import org.gradle.api.Project
  * that can be defined either directly, via Closures or via namespaces
  * gradle.properties
  */
-abstract class NestedExtension implements GroovyInterceptable {
+abstract class NestablePluginExtension implements GroovyInterceptable {
 
   private final Project project
   private final String namespace
 
-  NestedExtension(Project project, String namespace) {
+  NestablePluginExtension(Project project, String namespace) {
     this.project = project
     this.namespace = namespace
   }
 
-  NestedExtension(Project project, String parentNamespace, String newName) {
+  NestablePluginExtension(Project project, String parentNamespace, String newName) {
     this(project, "${parentNamespace}.${newName}")
   }
 
-  NestedExtension(NestedExtension parent, String newName) {
+  NestablePluginExtension(NestablePluginExtension parent, String newName) {
     this(parent.getProject(), parent.getNamespace(), newName)
   }
 
@@ -33,13 +33,13 @@ abstract class NestedExtension implements GroovyInterceptable {
   Object invokeMethod(String name, Object args) {
     MetaMethod method = metaClass.getMetaMethod(name, args)
     if (method != null) {
-      return NestedExtensionHelper.handleRealMethod(this, method, args)
+      return NestablePluginExtensionHelper.handleRealMethod(this, method, args)
     }
     if (hasProperty(name) && args instanceof Object[] && args.length == 1) {
       Object arg = args[0]
       if (arg instanceof Closure) {
         Object propertyValue = metaClass.getProperty(this, name)
-        if (propertyValue instanceof NestedExtension) {
+        if (propertyValue instanceof NestablePluginExtension) {
           return propertyValue.applyClosure(arg)
         }
       } else {
@@ -60,7 +60,7 @@ abstract class NestedExtension implements GroovyInterceptable {
   @Override
   Object getProperty(String propName) {
     Object obj = metaClass.getProperty(this, propName)
-    if (obj instanceof NestedExtension || obj != null) {
+    if (obj instanceof NestablePluginExtension || obj != null) {
       return obj
     }
 
@@ -84,7 +84,7 @@ abstract class NestedExtension implements GroovyInterceptable {
       Object value = getProperty(key)
       if (value == null) {
         missingProps.add(qualifyPropertyName(key))
-      } else if (value instanceof NestedExtension) {
+      } else if (value instanceof NestablePluginExtension) {
         missingProps.addAll(value.findMissingProps())
       }
     }
