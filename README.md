@@ -36,7 +36,7 @@ rootnamespace {
 
 Here's how we do it...
 
-Add `compile 'com.episode6.hackit.nestable:nestable:0.0.1'` to your plugin's dependencies.
+Add `compile 'com.episode6.hackit.nestable:nestable:0.0.2-SNAPSHOT'` to your plugin's dependencies.
 
 Implement your own root plugin extension. You'll have to define some special methods here for the top-level nestable extensions, but only in the root plugin
 ```groovy
