@@ -214,6 +214,28 @@ class NestablePluginExtensionTest extends Specification {
     innerInnerIntParam4 == 18
   }
 
+  def "verify find all missing props"() {
+    when:
+    List<String> missingProps = testContainer.outerTest.findMissingProperties()
+
+    then:
+    missingProps.size() == 14
+    missingProps.contains("outerTest.stringParam")
+    missingProps.contains("outerTest.intParam")
+    missingProps.contains("outerTest.innerTest1.stringParam")
+    missingProps.contains("outerTest.innerTest1.intParam")
+    missingProps.contains("outerTest.innerTest1.innerInnerTest1.stringParam")
+    missingProps.contains("outerTest.innerTest1.innerInnerTest1.intParam")
+    missingProps.contains("outerTest.innerTest1.innerInnerTest2.stringParam")
+    missingProps.contains("outerTest.innerTest1.innerInnerTest2.intParam")
+    missingProps.contains("outerTest.innerTest2.stringParam")
+    missingProps.contains("outerTest.innerTest2.intParam")
+    missingProps.contains("outerTest.innerTest2.innerInnerTest1.stringParam")
+    missingProps.contains("outerTest.innerTest2.innerInnerTest1.intParam")
+    missingProps.contains("outerTest.innerTest2.innerInnerTest2.stringParam")
+    missingProps.contains("outerTest.innerTest2.innerInnerTest2.intParam")
+  }
+
   static class TestObjectContainer {
     RootExtensionObject outerTest
     TestObjectContainer(Project project) {

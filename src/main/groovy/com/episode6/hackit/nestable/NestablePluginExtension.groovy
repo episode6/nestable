@@ -77,7 +77,7 @@ abstract class NestablePluginExtension implements GroovyInterceptable {
     return this
   }
 
-  List<String> findMissingProps() {
+  List<String> findMissingProperties() {
     List<String> missingProps = new LinkedList<>()
     getProperties().keySet().each { key ->
       // explicitly call getProperty so we check getOptionalProjectProperty as well
@@ -85,7 +85,7 @@ abstract class NestablePluginExtension implements GroovyInterceptable {
       if (value == null) {
         missingProps.add(qualifyPropertyName(key))
       } else if (value instanceof NestablePluginExtension) {
-        missingProps.addAll(value.findMissingProps())
+        missingProps.addAll(value.findMissingProperties())
       }
     }
     return missingProps
