@@ -236,6 +236,59 @@ class NestablePluginExtensionTest extends Specification {
     missingProps.contains("outerTest.innerTest2.innerInnerTest2.intParam")
   }
 
+  def "verify find some missing props"() {
+    when:
+    List<String> missingProps = testContainer.outerTest.findMissingPropertiesExcluding([
+        "outerTest.innerTest1.intParam",
+        "outerTest.innerTest1.innerInnerTest2.stringParam",
+        "outerTest.innerTest2.innerInnerTest1" /* child-extension */] as String[])
+
+    then:
+    missingProps.size() == 10
+    missingProps.contains("outerTest.stringParam")
+    missingProps.contains("outerTest.intParam")
+    missingProps.contains("outerTest.innerTest1.stringParam")
+    missingProps.contains("outerTest.innerTest1.innerInnerTest1.stringParam")
+    missingProps.contains("outerTest.innerTest1.innerInnerTest1.intParam")
+    missingProps.contains("outerTest.innerTest1.innerInnerTest2.intParam")
+    missingProps.contains("outerTest.innerTest2.stringParam")
+    missingProps.contains("outerTest.innerTest2.intParam")
+    missingProps.contains("outerTest.innerTest2.innerInnerTest2.stringParam")
+    missingProps.contains("outerTest.innerTest2.innerInnerTest2.intParam")
+  }
+
+  def "verify not missing props i have"() {
+    when:
+    1 * project.hasProperty("outerTest.stringParam") >> true
+    1 * project.hasProperty("outerTest.intParam") >> true
+    1 * project.findProperty("outerTest.stringParam") >> "outerStringParam"
+    1 * project.findProperty("outerTest.intParam") >> 12
+
+    and:
+    testContainer.outerTest {
+      innerTest1 {
+        stringParam "innerStringParam1"
+        intParam 13
+      }
+    }
+
+    and:
+    List<String> missingProps = testContainer.outerTest.findMissingProperties()
+
+    then:
+    missingProps.size() == 10
+    missingProps.contains("outerTest.innerTest1.innerInnerTest1.stringParam")
+    missingProps.contains("outerTest.innerTest1.innerInnerTest1.intParam")
+    missingProps.contains("outerTest.innerTest1.innerInnerTest2.stringParam")
+    missingProps.contains("outerTest.innerTest1.innerInnerTest2.intParam")
+    missingProps.contains("outerTest.innerTest2.stringParam")
+    missingProps.contains("outerTest.innerTest2.intParam")
+    missingProps.contains("outerTest.innerTest2.innerInnerTest1.stringParam")
+    missingProps.contains("outerTest.innerTest2.innerInnerTest1.intParam")
+    missingProps.contains("outerTest.innerTest2.innerInnerTest2.stringParam")
+    missingProps.contains("outerTest.innerTest2.innerInnerTest2.intParam")
+  }
+
   static class TestObjectContainer {
     RootExtensionObject outerTest
     TestObjectContainer(Project project) {

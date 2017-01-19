@@ -1,5 +1,6 @@
 package com.episode6.hackit.nestable
 
+import org.gradle.api.Nullable
 import org.gradle.api.Project
 
 /**
@@ -23,6 +24,45 @@ abstract class NestablePluginExtension implements GroovyInterceptable {
 
   NestablePluginExtension(NestablePluginExtension parent, String newName) {
     this(parent.getProject(), parent.getNamespace(), newName)
+  }
+
+  /**
+   * apply a given closure to $this
+   */
+  Object applyClosure(Closure closure) {
+    closure.setDelegate(this)
+    closure.setResolveStrategy(Closure.DELEGATE_FIRST)
+    closure.call()
+    return this
+  }
+
+  List<String> findMissingProperties() {
+    return findMissingPropertiesExcluding(null)
+  }
+
+  List<String> findMissingPropertiesExcluding(@Nullable String[] exclude) {
+    List<String> missingProps = new LinkedList<>()
+    getProperties().keySet().each { key ->
+      String qualifiedPropertyName = qualifyPropertyName(key)
+      if (exclude == null || !exclude.contains(qualifiedPropertyName)) {
+        // explicitly call getProperty so we check getOptionalProjectProperty as well
+        Object value = getProperty(key)
+        if (value == null) {
+          missingProps.add(qualifiedPropertyName)
+        } else if (value instanceof NestablePluginExtension) {
+          missingProps.addAll(value.findMissingPropertiesExcluding(exclude))
+        }
+      }
+    }
+    return missingProps
+  }
+
+  Project getProject() {
+    return project
+  }
+
+  String getNamespace() {
+    return namespace
   }
 
   /**
@@ -65,38 +105,6 @@ abstract class NestablePluginExtension implements GroovyInterceptable {
     }
 
     return getOptionalProjectProperty(propName)
-  }
-
-  /**
-   * apply a given closure to $this
-   */
-  Object applyClosure(Closure closure) {
-    closure.setDelegate(this)
-    closure.setResolveStrategy(Closure.DELEGATE_FIRST)
-    closure.call()
-    return this
-  }
-
-  List<String> findMissingProperties() {
-    List<String> missingProps = new LinkedList<>()
-    getProperties().keySet().each { key ->
-      // explicitly call getProperty so we check getOptionalProjectProperty as well
-      Object value = getProperty(key)
-      if (value == null) {
-        missingProps.add(qualifyPropertyName(key))
-      } else if (value instanceof NestablePluginExtension) {
-        missingProps.addAll(value.findMissingProperties())
-      }
-    }
-    return missingProps
-  }
-
-  Project getProject() {
-    return project
-  }
-
-  String getNamespace() {
-    return namespace
   }
 
   protected Object getOptionalProjectProperty(String propertyName) {
