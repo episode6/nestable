@@ -17,7 +17,7 @@ repositories {
 apply plugin: 'groovy'
 apply plugin: 'java-gradle-plugin'
 apply plugin: 'com.episode6.hackit.deployable.jar'
-apply plugin: 'com.episode6.hackit.deployable.addon.groovdocs'
+apply plugin: 'com.episode6.hackit.deployable.addon.groovydocs'
 
 
 dependencies {
