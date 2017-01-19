@@ -35,76 +35,77 @@ rootnamespace {
 ```
 
 Here's how we do it...
-- Add `compile 'com.episode6.hackit.nestable:nestable:0.0.1-SNAPSHOT'` to your plugin's dependencies.
-- Implement your own root plugin extension. You'll have to define some special methods here for the top-level nestable extensions, but only in the root plugin
+Add `compile 'com.episode6.hackit.nestable:nestable:0.0.1-SNAPSHOT'` to your plugin's dependencies.
+
+Implement your own root plugin extension. You'll have to define some special methods here for the top-level nestable extensions, but only in the root plugin
 ```groovy
 class RootExtension extends NestablePluginExtension {
 
-  // both of these are NestablePluginExtensions we define below
-  SubGroup1 subgroup1
-  SubGroup2 subgroup2
+    // both of these are NestablePluginExtensions we define below
+    SubGroup1 subgroup1
+    SubGroup2 subgroup2
 
-  RootExtension(Project project) {
-    super(project, "rootnamespace")
-    subgroup1 = new SubGroup1(this)
-    subgroup2 = new SubGroup2(this)
-  }
+    RootExtension(Project project) {
+        super(project, "rootnamespace")
+        subgroup1 = new SubGroup1(this)
+        subgroup2 = new SubGroup2(this)
+    }
 
-  // you only need the following methods in your root-level plugin
+    // you only need the following methods in your root-level plugin
 
-  SubGroup1 subgroup1(Closure closure) {
-    return subgroup1.applyClosure(closure)
-  }
+    SubGroup1 subgroup1(Closure closure) {
+        return subgroup1.applyClosure(closure)
+    }
 
-  SubGroup2 subgroup2(Closure closure) {
-    return subgroup2.applyClosure(closure)
-  }
+    SubGroup2 subgroup2(Closure closure) {
+        return subgroup2.applyClosure(closure)
+    }
 }
 ```
 
-- Then define your child plugins
+Then define your child plugins
  ```groovy
 class SubGroup1 extends NestablePluginExtension {
-  String param1
-  String param2
-  SubGroup3 subgroup3 // another nestable extension
+    String param1
+    String param2
+    SubGroup3 subgroup3 // another nestable extension
 
-  SubGroup1(NestablePluginExtension parent) {
-    // Here i define the sub-namespace of this plugin. If you want to
-    // re-use the same struct in multiple places, simply pass the
-    // newNamespace String to the constructor
-    super(parent, "subspace1")
-  }
+    SubGroup1(NestablePluginExtension parent) {
+        // Here i define the sub-namespace of this plugin. If you want to
+        // re-use the same struct in multiple places, simply pass the
+        // newNamespace String to the constructor
+        super(parent, "subspace1")
+    }
 
-  // Notice, we don't need those extra closure methods in a child-extension
+    // Notice, we don't need those extra closure methods in a child-extension
 }
 
 class SubGroup2 extends NestablePluginExtension {
-  String xParam
+    String xParam
 
-  SubGroup2(NestablePluginExtension parent) {
-    super(parent, "subspace2")
-  }
+    SubGroup2(NestablePluginExtension parent) {
+        super(parent, "subspace2")
+    }
 }
 
 class SubGroup3 extends NestablePluginExtension {
-  String yParam
+    String yParam
 
-  SubGroup3(NestablePluginExtension parent) {
-    super(parent, "subspace3")
-  }
+    SubGroup3(NestablePluginExtension parent) {
+        super(parent, "subspace3")
+    }
 }
 ```
 
-- In your plugin code, add your extension (it's recommended that your extension be named the same as the root namespace of your extension so that the syntax matches)
+In your plugin code, add your extension (it's recommended that your extension be named the same as the root namespace of your extension so that the syntax matches)
 ```groovy
 class MyPlugin implements Plugin<Project> {
-  void apply(Project project) {
-    RootExtension rootExtension = project.extensions.create(
-      "rootnamespace",
-      RootExtension,
-      project)
-  }
+    void apply(Project project) {
+        RootExtension rootExtension = project.extensions.create(
+            "rootnamespace",
+            RootExtension,
+            project)
+    }
 }
 ```
 
