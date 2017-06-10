@@ -11,6 +11,11 @@ buildscript {
 group = "com.episode6.hackit.nestable"
 version = "0.0.2-SNAPSHOT"
 
+task wrapper(type: Wrapper) {
+  gradleVersion = "3.3"
+  distributionType = "all"
+}
+
 repositories {
   jcenter()
 }
