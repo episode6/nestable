@@ -3,8 +3,8 @@ buildscript {
     jcenter()
   }
   dependencies {
-    classpath 'com.episode6.hackit.deployable:deployable:0.1.5'
-    classpath 'com.episode6.hackit.gdmc:gdmc:0.1.6'
+    classpath 'com.episode6.hackit.deployable:deployable:0.1.9'
+    classpath 'com.episode6.hackit.gdmc:gdmc:0.1.7'
   }
 }
 
@@ -26,10 +26,10 @@ apply plugin: 'com.episode6.hackit.deployable.addon.groovydocs'
 apply plugin: 'com.episode6.hackit.gdmc'
 
 dependencies {
-  compile localGroovy()
-  compile gradleApi()
+  implementation localGroovy()
+  implementation gradleApi()
 
-  testCompile("org.spockframework:spock-core")  {
+  testImplementation("org.spockframework:spock-core")  {
     exclude module: 'groovy-all'
   }
 }
