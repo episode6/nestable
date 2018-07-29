@@ -11,8 +11,8 @@ buildscript {
 group = "com.episode6.hackit.nestable"
 version = "0.0.2-SNAPSHOT"
 
-task wrapper(type: Wrapper) {
-  gradleVersion = "4.4"
+wrapper {
+  gradleVersion = "4.9"
   distributionType = "all"
 }
 
